@@ -7,7 +7,10 @@ import type {
   AsyncAPITool,
   FinalAsyncAPITool,
   FinalToolsListObject,
+  IgnoredToolRecord,
   LanguageColorItem,
+  ToolIgnoreEntry,
+  ToolsIgnoreFile,
   ToolsListObject
 } from '@/types/scripts/tools';
 
@@ -170,6 +173,34 @@ const processManualTool = async (tool: AsyncAPITool) => {
 };
 
 /**
+ * Checks whether a tool matches any entry in the ignore list for the given category.
+ *
+ * Matching rules:
+ * - If an ignore entry has `repoUrl`, the tool must have a matching repoUrl AND matching title.
+ * - If an ignore entry has only `title` (no repoUrl), any tool with that title matches.
+ * - If an ignore entry has `categories`, the match only applies within those categories.
+ */
+function shouldIgnoreTool(tool: AsyncAPITool, category: string, ignoreList: ToolIgnoreEntry[]): ToolIgnoreEntry | null {
+  for (const entry of ignoreList) {
+    if (entry.categories?.length && !entry.categories.includes(category)) {
+      continue;
+    }
+
+    const titleMatches = tool.title === entry.title;
+
+    if (entry.repoUrl) {
+      if (titleMatches && tool.links?.repoUrl === entry.repoUrl) {
+        return entry;
+      }
+    } else if (titleMatches) {
+      return entry;
+    }
+  }
+
+  return null;
+}
+
+/**
  * Combine the automated tools and manual tools list into a single JSON object file, and
  * lists down all the language and technology tags in one JSON file.
  *
@@ -177,22 +208,74 @@ const processManualTool = async (tool: AsyncAPITool) => {
  * @param {ToolsListObject} manualTools - The list of manual tools.
  * @param {string} toolsPath - The path to save the combined tools JSON file.
  * @param {string} tagsPath - The path to save the tags JSON file.
+ * @param {string} [ignorePath] - Optional path to the tools-ignore.json file.
+ * @param {string} [ignoredOutputPath] - Optional path to write the audit log of ignored tools.
  */
 const combineTools = async (
   automatedTools: ToolsListObject,
   manualTools: ToolsListObject,
   toolsPath: string,
-  tagsPath: string
+  tagsPath: string,
+  ignorePath?: string,
+  ignoredOutputPath?: string
 ): Promise<void> => {
   try {
+    let ignoreList: ToolIgnoreEntry[] = [];
+    const ignoredTools: IgnoredToolRecord[] = [];
+
+    if (ignorePath && fs.existsSync(ignorePath)) {
+      const ignoreFile: ToolsIgnoreFile = JSON.parse(fs.readFileSync(ignorePath, 'utf-8'));
+
+      ignoreList = ignoreFile.tools || [];
+    }
+
     // eslint-disable-next-line no-restricted-syntax
     for (const key in automatedTools) {
       if (Object.prototype.hasOwnProperty.call(automatedTools, key)) {
+        const filteredAutomated = automatedTools[key].toolsList.filter((tool) => {
+          const matchedEntry = shouldIgnoreTool(tool, key, ignoreList);
+
+          if (matchedEntry) {
+            ignoredTools.push({
+              title: tool.title,
+              repoUrl: tool.links?.repoUrl,
+              reason: matchedEntry.reason,
+              category: key,
+              source: 'automated',
+              ignoredAt: new Date().toISOString()
+            });
+
+            return false;
+          }
+
+          return true;
+        });
+
         // eslint-disable-next-line no-await-in-loop
-        const automatedResults = await Promise.all(automatedTools[key].toolsList.map(getFinalTool));
-        const manualResults = manualTools[key]?.toolsList?.length
+        const automatedResults = await Promise.all(filteredAutomated.map(getFinalTool));
+
+        const filteredManual = (manualTools[key]?.toolsList || []).filter((tool) => {
+          const matchedEntry = shouldIgnoreTool(tool, key, ignoreList);
+
+          if (matchedEntry) {
+            ignoredTools.push({
+              title: tool.title,
+              repoUrl: tool.links?.repoUrl,
+              reason: matchedEntry.reason,
+              category: key,
+              source: 'manual',
+              ignoredAt: new Date().toISOString()
+            });
+
+            return false;
+          }
+
+          return true;
+        });
+
+        const manualResults = filteredManual.length
           ? // eslint-disable-next-line no-await-in-loop
-            (await Promise.all(manualTools[key].toolsList.map(processManualTool))).filter(Boolean)
+            (await Promise.all(filteredManual.map(processManualTool))).filter(Boolean)
           : [];
 
         finalTools[key].toolsList = [...automatedResults, ...manualResults].sort((tool, anotherTool) => {
@@ -210,6 +293,7 @@ const combineTools = async (
         }) as FinalAsyncAPITool[];
       }
     }
+
     fs.writeFileSync(toolsPath, JSON.stringify(finalTools, null, 2));
     fs.writeFileSync(
       tagsPath,
@@ -222,9 +306,39 @@ const combineTools = async (
         2
       )
     );
+
+    if (ignoredOutputPath && ignoredTools.length > 0) {
+      fs.writeFileSync(
+        ignoredOutputPath,
+        JSON.stringify(
+          {
+            description: 'Auto-generated audit log of tools ignored during the last combine run.',
+            generatedAt: new Date().toISOString(),
+            totalIgnored: ignoredTools.length,
+            ignoredTools
+          },
+          null,
+          2
+        )
+      );
+    } else if (ignoredOutputPath && ignoredTools.length === 0) {
+      fs.writeFileSync(
+        ignoredOutputPath,
+        JSON.stringify(
+          {
+            description: 'Auto-generated audit log of tools ignored during the last combine run.',
+            generatedAt: new Date().toISOString(),
+            totalIgnored: 0,
+            ignoredTools: []
+          },
+          null,
+          2
+        )
+      );
+    }
   } catch (err) {
     throw new Error(`Error combining tools: ${err}`);
   }
 };
 
-export { combineTools };
+export { combineTools, shouldIgnoreTool };
