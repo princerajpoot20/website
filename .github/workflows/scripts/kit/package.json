@@ -1,0 +1,8 @@
+{
+  "name": "schedule-email",
+  "description": "Schedules an email broadcast via Kit.com API for TSC member notifications.",
+  "license": "Apache 2.0",
+  "dependencies": {
+    "@actions/core": "1.6.0"
+  }
+}
