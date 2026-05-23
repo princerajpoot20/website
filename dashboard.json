@@ -9,7 +9,7 @@
       "resourcePath": "/asyncapi/website/pull/5253",
       "repo": "asyncapi/website",
       "labels": [],
-      "score": 28.430284286176615
+      "score": 28.717458874925875
     },
     {
       "id": "I_kwDOBW5R_c7pGlqB",
@@ -44,7 +44,7 @@
       "resourcePath": "/asyncapi/community/issues/2236",
       "repo": "asyncapi/community",
       "labels": [],
-      "score": 10.912634372471834
+      "score": 11.48698354997035
     },
     {
       "id": "I_kwDOGQYLdM67ixbm",
@@ -87,46 +87,6 @@
       "score": 10.338285194973315
     },
     {
-      "id": "I_kwDODCuNRs6NFZib",
-      "isPR": false,
-      "isAssigned": false,
-      "title": "ROS2 bindings",
-      "author": "renzo-sie",
-      "resourcePath": "/asyncapi/bindings/issues/254",
-      "repo": "asyncapi/bindings",
-      "labels": [
-        {
-          "name": "enhancement",
-          "color": "a2eeef"
-        },
-        {
-          "name": "stale",
-          "color": "ededed"
-        }
-      ],
-      "score": 10.051110606224057
-    },
-    {
-      "id": "I_kwDOCHlHJM61Y1X2",
-      "isPR": false,
-      "isAssigned": true,
-      "title": "explore how to handle `reply` operation in code generation",
-      "author": "derberg",
-      "resourcePath": "/asyncapi/generator/issues/1547",
-      "repo": "asyncapi/generator",
-      "labels": [
-        {
-          "name": "enhancement",
-          "color": "a2eeef"
-        },
-        {
-          "name": "stale",
-          "color": "ededed"
-        }
-      ],
-      "score": 8.615237662477762
-    },
-    {
       "id": "PR_kwDOBW5R_c7OKdhx",
       "isPR": true,
       "isAssigned": false,
@@ -155,6 +115,17 @@
           "color": "0052cc"
         }
       ],
+      "score": 7.7537138962299865
+    },
+    {
+      "id": "PR_kwDOCHlHJM7NT-iG",
+      "isPR": true,
+      "isAssigned": true,
+      "title": "docs: rewrite Java template tutorial to AsyncAPI v3",
+      "author": "wei123-web",
+      "resourcePath": "/asyncapi/generator/pull/2029",
+      "repo": "asyncapi/generator",
+      "labels": [],
       "score": 7.7537138962299865
     },
     {
@@ -189,6 +160,17 @@
       "repo": "asyncapi/modelina",
       "labels": [],
       "score": 7.179364718731469
+    },
+    {
+      "id": "PR_kwDOFLhIt87ZqBG1",
+      "isPR": true,
+      "isAssigned": false,
+      "title": "chore(docs): asyncapi maintainership program docs update",
+      "author": "AceTheCreator",
+      "resourcePath": "/asyncapi/community/pull/3541",
+      "repo": "asyncapi/community",
+      "labels": [],
+      "score": 6.89219012998221
     }
   ],
   "goodFirstIssues": [
@@ -243,6 +225,21 @@
         {
           "name": "priority: normal",
           "color": "A0E245"
+        }
+      ]
+    },
+    {
+      "id": "I_kwDOBW5R_c7o1a3K",
+      "title": "[TEST]: Add unit tests for scripts/compose.ts",
+      "isAssigned": false,
+      "resourcePath": "/asyncapi/website/issues/5096",
+      "repo": "asyncapi/website",
+      "author": "codxbrexx",
+      "area": "javascript",
+      "labels": [
+        {
+          "name": "triaged",
+          "color": "0052cc"
         }
       ]
     },
@@ -312,12 +309,12 @@
       ]
     },
     {
-      "id": "I_kwDOBW5R_c7jlJXk",
-      "title": "[BUG] : Unreadable Text in Roadmap Item Details",
+      "id": "I_kwDOBW5R_c7j-AS6",
+      "title": "[BUG] :Broken link: “workflow with unsecured context” points to missing GitHub Actions workflow",
       "isAssigned": false,
-      "resourcePath": "/asyncapi/website/issues/4958",
+      "resourcePath": "/asyncapi/website/issues/4970",
       "repo": "asyncapi/website",
-      "author": "sauraviiitk",
+      "author": "SHUBHANSHU602",
       "area": "Unknown",
       "labels": [
         {
@@ -331,29 +328,18 @@
       ]
     },
     {
-      "id": "I_kwDOBW5R_c7jecmh",
-      "title": "[DESIGN]: Improve layout structure and text readability of TSC section",
+      "id": "I_kwDOBW5R_c7jlJXk",
+      "title": "[BUG] : Unreadable Text in Roadmap Item Details",
       "isAssigned": false,
-      "resourcePath": "/asyncapi/website/issues/4954",
+      "resourcePath": "/asyncapi/website/issues/4958",
       "repo": "asyncapi/website",
-      "author": "SinghSwayam",
+      "author": "sauraviiitk",
       "area": "Unknown",
       "labels": [
         {
-          "name": "triaged",
-          "color": "0052cc"
-        }
-      ]
-    },
-    {
-      "id": "I_kwDOBW5R_c7ih5i8",
-      "title": "[DESIGN]: Footer Netlify badge alt text renders poorly and inconsistently when image fails to load",
-      "isAssigned": false,
-      "resourcePath": "/asyncapi/website/issues/4921",
-      "repo": "asyncapi/website",
-      "author": "SHUBHANSHU602",
-      "area": "Unknown",
-      "labels": [
+          "name": "bug",
+          "color": "ee0701"
+        },
         {
           "name": "triaged",
           "color": "0052cc"
