@@ -12,7 +12,7 @@ interface IGitHubIssueProps {
  */
 export default function GitHubIssue({
   className = '',
-  href = 'https://github.com/asyncapi/website/issues/new/choose'
+  href = 'https://github.com/princerajpoot20/website/issues/new/choose'
 }: IGitHubIssueProps) {
   return (
     <a
