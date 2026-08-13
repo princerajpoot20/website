@@ -145,6 +145,28 @@ async function convertTools(data: ToolsData) {
       })
     );
 
+    // Ensure deterministic ordering within each category so automated tools
+    // JSON output does not change solely due to processing order.
+    Object.keys(finalToolsObject).forEach((categoryName) => {
+      const category = finalToolsObject[categoryName];
+
+      if (!category || !Array.isArray(category.toolsList)) return;
+
+      category.toolsList.sort((firstTool, secondTool) => {
+        if (!firstTool?.title || !secondTool?.title) {
+          logger.error({
+            message: 'Tool title is missing during automated tools sort',
+            detail: { firstTool, secondTool },
+            source: 'tools-object.ts'
+          });
+
+          return 0;
+        }
+
+        return firstTool.title.localeCompare(secondTool.title);
+      });
+    });
+
     return finalToolsObject;
   } catch (err: unknown) {
     logger.error('Error processing tools:', err);
