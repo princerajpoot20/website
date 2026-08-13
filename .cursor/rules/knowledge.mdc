@@ -1,0 +1,74 @@
+---
+description: Rules for reading and writing the .spec/knowledge/ hierarchy. Navigation starts from the index — never blindly load files.
+alwaysApply: true
+---
+
+# Knowledge Navigation Rules
+
+## Always start from the index
+
+When loading knowledge for any task, start with `knowledge/index.md`. Use it to determine which chapters are relevant to the work at hand.
+
+Never open chapter or detail files without first reading the index. The index exists precisely to make this navigation decision cheap.
+
+## Load only what's needed
+
+For a given task, load:
+1. `knowledge/index.md` — always
+2. Only the chapter `README.md` files that are relevant to the task
+3. Only the detail topic pages specifically needed for this task
+
+Do not load all chapters. Do not load chapters because they might be relevant — they must be clearly relevant to the current work.
+
+## Chapter structure
+
+Each chapter lives in `knowledge/{domain}/`:
+- `README.md` — chapter navigation and overview (always required if the chapter exists)
+- `{topic}.md` — detail pages for specific areas within the chapter (created on demand)
+
+## Writing to knowledge
+
+When updating knowledge during `/complete` or `/discover --refresh`:
+
+1. Update only the specific section that changed — do not restructure the whole page
+2. At the bottom of any updated section, add a traceability note:
+   ```
+   > Updated by: [{work-id}](../../work/archive/{path}) — {ISO date}
+   ```
+3. If adding a new section to a chapter, also add it to that chapter's "Subsections" list in the README
+4. If adding a new chapter, add it to `knowledge/index.md`
+
+## Marking gaps
+
+Brownfield codebases have areas that aren't fully understood or documented. Mark gaps explicitly:
+
+```
+> ⚠️ TBD — {what is unknown and where to look to verify it}
+```
+
+Never fill a gap with a confident guess. A TBD is immediately useful — an agent downstream will know to verify before acting. A wrong fact is silently harmful.
+
+## The index is not a dump
+
+The master `knowledge/index.md` is a navigation tool, not a complete description of the codebase. Each chapter entry should be long enough to decide whether to open that chapter (2–4 lines), not a full summary of it.
+
+Detail belongs in chapter README files. Deep implementation detail belongs in topic pages.
+
+## The deploy page exception
+
+`knowledge/deploy.md` is always a single page regardless of project size. Deployment knowledge is loaded as a unit — the navigation overhead of splitting it outweighs the token savings for most projects.
+
+If the deploy page becomes very large (> 400 lines), consider splitting it, but prefer keeping it unified.
+
+## Freshness markers
+
+Every knowledge file should carry an "Updated: {ISO date}" marker near the top. When updating a file, update this marker. This makes stale sections visible at a glance.
+
+## Preserve the TBD trail
+
+When a TBD section is finally filled in, add a note about what resolved it:
+```
+> ⚠️ TBD — Resolved by [{work-id}](../../work/archive/{path}) on {date}. {One-line summary of what was discovered.}
+```
+
+This preserves the history of why the gap existed and how it was resolved.

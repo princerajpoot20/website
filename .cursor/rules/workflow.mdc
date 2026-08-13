@@ -1,0 +1,63 @@
+---
+description: Enforces the step-by-step discipline of the spec kit workflow. One step per turn. No skipping ahead.
+alwaysApply: true
+---
+
+# Workflow Discipline Rules
+
+## The one-step rule
+
+Each command (`/discover`, `/start`, `/complete`, `/challenge`, `/code-review`) runs one step at a time and stops for review before proceeding.
+
+Do not chain steps automatically. If a user asks to "just do everything," complete the current step, explain what comes next, and wait.
+
+## The knowledge-first rule
+
+Before doing any planning or implementation work on a codebase, check for `.spec/knowledge/index.md`.
+
+If it doesn't exist, say so and suggest `/discover` before proceeding.
+
+**Exception:** `/discover` and `/code-review` may begin without existing knowledge — they are designed to work from scratch.
+
+## The no-code-in-planning rule
+
+During `/start` and `/challenge`, produce no implementation code. Planning steps produce plans, notes, and questions — not implementations. Code comes after the plan is reviewed and approved by the user.
+
+## The question-before-plan rule
+
+During `/start`, if anything about the intent, scope, or approach is unclear, ask first. Never produce a plan based on unresolved ambiguity. A plan built on wrong assumptions costs more to fix than the time spent clarifying.
+
+## The stop-and-wait rule
+
+When a command step ends with a question or a decision point, **stop and wait for a response** before proceeding. Do not continue with assumptions if a question is open.
+
+## The knowledge-update rule
+
+When work is completed via `/complete`, always ask whether knowledge needs updating before archiving. Never archive without this check.
+
+If the implementation diverged from the plan in a way that reveals something about the codebase, that discovery belongs in the knowledge base.
+
+## The traceability rule
+
+Every archived work item must be linked from `work/archive/README.md`. Every update to a knowledge page must reference the work item that drove it, using the traceability note format:
+
+```
+> Updated by: [{id}](../../work/archive/{path}) — {date}
+```
+
+## The brownfield grace rule
+
+Knowledge files may be incomplete, stale, or have TBD sections. This is expected — brownfield codebases are always partially documented.
+
+When knowledge is incomplete: work with what exists, note the gap, and suggest updating the relevant knowledge page. Do not refuse to proceed because knowledge is imperfect.
+
+## The work-item persistence rule
+
+Active work items live at `.spec/work/active/{id}.md`. **This directory is intentionally gitignored** — work items are local planning state, not source code.
+
+Consequences:
+- `git status`, `git ls-files`, and any git-based lookup will show `.spec/work/active/` as empty even when work items exist on disk.
+- To check for active work items, ALWAYS use a real filesystem list (e.g. `ls .spec/work/active/`, `find .spec/work/active -maxdepth 1 -type f -name '*.md'`, or Cursor's directory-read tool).
+- Never conclude "no active work items" from a git-based check alone. Always confirm with a filesystem list before saying so.
+
+Work items persist across chat sessions and Cursor restarts. They are only removed by an explicit `/complete` on a fully-done item. Partial completions leave the item in place and append a Remaining-work section.

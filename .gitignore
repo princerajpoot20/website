@@ -25,3 +25,6 @@ config/tools-ignored.json
 deno.lock
 cypress/videos
 cypress/screenshots
+
+# Prince Spec Kit — local planning
+.spec/work/active/
